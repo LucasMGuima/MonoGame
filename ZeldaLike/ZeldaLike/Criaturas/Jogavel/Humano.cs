@@ -19,7 +19,8 @@ namespace ZeldaLike.Criaturas.Jogavel
 
         private int posDrawX;
         private int posDrawY;
-
+        private bool flipX;
+        private bool movendo;
         public float X { get; set; }
         public float Y { get; set; }
         public float vel { get; set; }
@@ -51,15 +52,26 @@ namespace ZeldaLike.Criaturas.Jogavel
             //Posicao do sprite a ser retirado da spriete sheet
             posDrawX = 0;
             posDrawY = this.spriteHeight;
+            //Inverter a frente do sprite
+            flipX = false;
+            //Checa se é para animar o sprite
+            movendo = false;
 
         }
 
         public void Draw()
         {
-            //Deseha o sprite correspondente da spritesheet
-            if(posDrawX < spriteWidth*3)
+            if (movendo)
             {
-                posDrawX += this.spriteWidth;
+                //Deseha o sprite correspondente da spritesheet
+                if (posDrawX < spriteWidth * 3)
+                {
+                    posDrawX += this.spriteWidth;
+                }
+                else
+                {
+                    posDrawX = 0;
+                }
             }
             else
             {
@@ -71,12 +83,48 @@ namespace ZeldaLike.Criaturas.Jogavel
             //Retangulo que indica qual sprite desenhar da spritesheet
             Rectangle rectPos = new Rectangle(posDrawX, posDrawY, this.spriteWidth, this.spriteHeight);
 
-            spriteBatch.Draw(imgHuman, new Vector2(X,Y), rectPos, Color.White);
+            SpriteEffects spEffect = SpriteEffects.None;
+            if (flipX)
+            {
+                spEffect = SpriteEffects.FlipHorizontally;
+            }
+
+            spriteBatch.Draw(imgHuman, new Vector2(X,Y), rectPos, Color.White, 0.0f, Vector2.One, new Vector2(1,1), spEffect, 1f);
+        }
+
+        public void Update(KeyboardState keyState)
+        {
+            float oldX = X;
+            float oldY = Y;
+            if (keyState.IsKeyDown(Keys.Up))
+            {
+               MoveUp();
+            }
+            if (keyState.IsKeyDown(Keys.Down))
+            {
+                MoveDown();
+            }
+            if (keyState.IsKeyDown(Keys.Right))
+            {
+                MoveRight();
+            }
+            if (keyState.IsKeyDown(Keys.Left))
+            {
+                MoveLeft();
+            }
+
+            if(oldX != X || oldY != Y) { 
+                movendo = true; 
+            } else
+            {
+                movendo = false;
+            }
         }
 
         #region MOVIMENTO
         public void MoveLeft()
         {
+            flipX = true;
             X = X - vel;
             if(X < 1)
             {
@@ -85,6 +133,7 @@ namespace ZeldaLike.Criaturas.Jogavel
         }
         public void MoveRight()
         {
+            flipX = false;
             X = X + vel;
             if((X + spriteWidth) > screenWidth)
             {

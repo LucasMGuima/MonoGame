@@ -67,22 +67,7 @@ namespace ZeldaLike
             // TODO: Add your update logic here
             //Pocessa eventos do teclado
             KeyboardState keyState = Keyboard.GetState();
-            if (keyState.IsKeyDown(Keys.Up))
-            {
-                humanao.MoveUp();
-            }
-            if (keyState.IsKeyDown(Keys.Down))
-            {
-                humanao.MoveDown();
-            }
-            if (keyState.IsKeyDown(Keys.Right))
-            {
-                humanao.MoveRight();
-            }
-            if (keyState.IsKeyDown(Keys.Left))
-            {
-                humanao.MoveLeft();
-            }
+            humanao.Update(keyState);
 
             base.Update(gameTime);
         }
